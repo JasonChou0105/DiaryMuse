@@ -13,6 +13,7 @@
     "@heroui/react": "^2.6.13",
     "@heroui/system": "^2.4.6",
     "@heroui/theme": "^2.4.5",
+    "@next/font": "^14.2.15",
     "framer-motion": "^11.18.1",
     "next": "15.1.5",
     "react": "^19.0.0",
