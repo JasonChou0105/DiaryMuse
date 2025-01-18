@@ -87,6 +87,7 @@ const Home: React.FC = () => {
       // Generate lyrics using GPT-4
       const gptResponse = await fetchGPTResponse(formData.text);
 
+
       // Generate song using lyrics and genres
       const songResponse = await fetchSongResponse(
           formData.selectedGenres.join(", "),
