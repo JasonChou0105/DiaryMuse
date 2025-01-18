@@ -16,7 +16,10 @@ export async function POST(request: Request) {
         const completion = await openai.chat.completions.create({
             model: "gpt-4o-mini",
             messages: [
-                { role: "system", content: "You are a helpful assistant." },
+                { role: "system", content: "You are writing song lyrics, based on how the user describes their day went. " +
+                        "You will make the lyrics relevant to the experiences and follow the mood of the experiences (i.e. " +
+                        "writing sadder lyrics for the sad experiences, and upbeat lyrics for the happy ones. Keep it to " +
+                        "five lines of lyrics." },
                 { role: "user", content: prompt },
             ],
         });
