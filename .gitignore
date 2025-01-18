@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+src/Include
+src/Scripts
+src/pyvenv.cfg
+src/Lib
+src/share
