@@ -1,6 +1,5 @@
 "use client";
 
-import AudioPlayer from "./AudioPlayer";
 import Lyrics from "./Lyrics";
 
 const Result = () => {

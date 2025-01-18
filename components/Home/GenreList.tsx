@@ -43,8 +43,8 @@ const GenreList: React.FC<GenreListProps> = ({
           onClick={() => handleGenreClick(genre)}
           className={`py-1 px-3 rounded-full text-sm font-medium transition-colors duration-300 ${
             selectedGenres.includes(genre)
-              ? "bg-blue-500 text-white"
-              : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+              ? "bg-gray-400 text-white"
+              : "bg-beige-300 text-gray-700 hover:bg-beige-400"
           }`}
         >
           {genre}

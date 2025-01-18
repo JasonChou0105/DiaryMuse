@@ -22,6 +22,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",
+    "uottahack7": "file:",
     "wavesurfer.js": "^7.8.16"
   },
   "devDependencies": {
