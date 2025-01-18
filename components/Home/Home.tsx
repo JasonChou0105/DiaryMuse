@@ -1,12 +1,19 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import Result from "./Result/Result";
+import GenreList from "./GenreList";
 
 const Home = () => {
-  const [text, setText] = useState("");
   const textAreaRef = useRef(null);
 
-  const handleInput = (event) => {
+  // Object state to store both selected genres and user input
+  const [formData, setFormData] = useState({
+    text: "",
+    selectedGenres: [] as string[],
+  });
+
+  const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = textAreaRef.current;
 
     // Reset the height to auto to recalculate
@@ -23,16 +30,35 @@ const Home = () => {
     }
 
     textarea.style.height = `${Math.min(newHeight, maxHeight)}px`;
+
+    // Update text in formData
+    setFormData((prevState) => ({
+      ...prevState,
+      text: event.target.value,
+    }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("Submitted Text:", text);
-    setText(""); // Clear the text area after submission
+    console.log("Submitted Data:", formData);
+
+    // Clear the formData
+    setFormData({
+      text: "",
+      selectedGenres: [],
+    });
+
     if (textAreaRef.current) {
       textAreaRef.current.style.height = "auto"; // Reset height
       textAreaRef.current.style.overflowY = "hidden"; // Reset scrollbar
     }
+  };
+
+  const updateSelectedGenres = (updatedGenres: string[]) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      selectedGenres: updatedGenres,
+    }));
   };
 
   return (
@@ -41,29 +67,34 @@ const Home = () => {
         <div className="block my-4 text-3xl font-bold text-gray-700">
           How Was Your Day?
         </div>
-        <form
-          onSubmit={handleSubmit}
-          className="w-full flex max-w-2xl bg-beige-200 rounded-3xl shadow-lg"
-        >
-          <textarea
-            id="textArea"
-            ref={textAreaRef}
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            onInput={handleInput}
-            className="block w-5/6 p-4 text-gray-700 bg-transparent rounded-l-3xl focus:outline-none focus:border-blue-500 resize-none leading-7"
-            placeholder="Type something..."
-            rows={1}
-            style={{ lineHeight: "1.75rem" }}
-          ></textarea>
-          <button
-            type="submit"
-            className="transition-all ease-in duration-300 w-1/6 m-2 text-black bg-beige-300 rounded-3xl hover:bg-beige-400 focus:outline-none shadow-md"
-          >
-            Generate
-          </button>
-        </form>
+        <div className="bg-beige-200 rounded-3xl shadow-lg w-full flex flex-col items-center justify-center max-w-2xl">
+          <form onSubmit={handleSubmit} className="w-full flex max-w-2xl">
+            <textarea
+              id="textArea"
+              ref={textAreaRef}
+              value={formData.text}
+              onChange={handleInput}
+              className="block w-5/6 p-4 text-gray-700 bg-transparent rounded-l-3xl focus:outline-none focus:border-blue-500 resize-none leading-7"
+              placeholder="Type something..."
+              rows={1}
+              style={{ lineHeight: "1.75rem" }}
+            ></textarea>
+            <button
+              type="submit"
+              className="transition-all ease-in duration-300 w-1/6 m-2 text-black bg-beige-300 rounded-3xl hover:bg-beige-400 focus:outline-none shadow-md"
+            >
+              Generate
+            </button>
+          </form>
+          <div className="w-full px-4 pb-2 flex max-w-2xl">
+            <GenreList
+              selectedGenres={formData.selectedGenres}
+              setSelectedGenres={updateSelectedGenres}
+            />
+          </div>
+        </div>
       </div>
+      <Result audioUrl={"../../Rev.mp3"} />
     </div>
   );
 };
