@@ -42,12 +42,9 @@ const Home = () => {
           onSubmit={handleSubmit}
           className="w-full max-w-2xl p-6 bg-white rounded-lg shadow-md"
         >
-          <label
-            htmlFor="textArea"
-            className="block mb-2 text-lg font-medium text-gray-700"
-          >
-            Enter your text:
-          </label>
+          <div className="block mb-2 text-lg font-medium text-gray-700">
+            How Was Your Day?
+          </div>
           <textarea
             id="textArea"
             ref={textAreaRef}

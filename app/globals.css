@@ -3,37 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --background: #efefef;
+  --background: #f5f0e6;
   --foreground: #171717;
 }
-input[type="range"]::-webkit-slider-thumb {
-  width: 20px;                 /* Increase size of thumb */
-  height: 20px;
-  background: #585858;         /* Green color */
-  border-radius: 50%;          /* Circular thumb */
-  -webkit-appearance: none;    /* Remove default appearance */
-  cursor: pointer;
-  transition: background 0.3s ease; /* Smooth transition on hover */
-}
-/* styles/globals.css */
-body {
-  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
-  font-family: 'Roboto', sans-serif;
-}
 
-<<<<<<< HEAD
-=======
-input[type="range"]:hover::-webkit-slider-thumb {
-  background: #6c6b6b;         /* Darker green on hover */
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
->>>>>>> b70993225e9605af13bf89ba5ce49e0f2cf73711
 body {
   color: var(--foreground);
   background: var(--background);
