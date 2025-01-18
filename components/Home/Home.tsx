@@ -1,142 +1,187 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, ChangeEvent, FormEvent } from "react";
 import Result from "./Result/Result";
 import GenreList from "./GenreList";
 
-const Home = () => {
-<<<<<<< HEAD
-=======
-  const [text, setText] = useState("");
-  const [response, setResponse] = useState(""); // To store GPT-4 response
-  const [loading, setLoading] = useState(false); // To manage loading state
->>>>>>> 4f1fc428a2c70ae100fd2091ba90fafd4ad4600b
-  const textAreaRef = useRef(null);
+// Types
+interface FormData {
+  text: string;
+  selectedGenres: string[];
+}
 
-  // Object state to store both selected genres and user input
-  const [formData, setFormData] = useState({
+interface APIResponse {
+  response: string;
+}
+
+interface SongResponse {
+  iframeSrc: string;
+}
+
+interface TextAreaStyles {
+  height: string;
+  overflowY: "hidden" | "auto";
+}
+
+// Constants
+const MAX_TEXTAREA_HEIGHT = 112; // 4 lines × 28px line height
+const LINE_HEIGHT = "1.75rem";
+
+const Home: React.FC = () => {
+  // State
+  const [loading, setLoading] = useState<boolean>(false);
+  const [iframeSrc, setIframeSrc] = useState<string>("");
+  const [formData, setFormData] = useState<FormData>({
     text: "",
-    selectedGenres: [] as string[],
+    selectedGenres: [],
   });
 
-  const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  // Refs
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Handlers
+  const handleTextAreaInput = (event: ChangeEvent<HTMLTextAreaElement>): void => {
     const textarea = textAreaRef.current;
+    if (!textarea) return;
 
-    // Reset the height to auto to recalculate
-    textarea.style.height = "auto";
+    const updateTextAreaHeight = (): TextAreaStyles => {
+      // Reset height to recalculate
+      textarea.style.height = "auto";
+      const newHeight = textarea.scrollHeight;
 
-    // Calculate and set the new height, with a maximum height for 4 lines
-    const maxHeight = 112; // 4 lines x 28px line height
-    const newHeight = textarea.scrollHeight;
+      return {
+        height: `${Math.min(newHeight, MAX_TEXTAREA_HEIGHT)}px`,
+        overflowY: newHeight <= MAX_TEXTAREA_HEIGHT ? "hidden" : "auto",
+      };
+    };
 
-    if (newHeight <= maxHeight) {
-      textarea.style.overflowY = "hidden"; // No scrollbar before 4 lines
-    } else {
-      textarea.style.overflowY = "auto"; // Enable scrollbar after 4 lines
-    }
+    const styles = updateTextAreaHeight();
+    textarea.style.height = styles.height;
+    textarea.style.overflowY = styles.overflowY;
 
-    textarea.style.height = `${Math.min(newHeight, maxHeight)}px`;
-
-    // Update text in formData
-    setFormData((prevState) => ({
-      ...prevState,
+    setFormData((prev) => ({
+      ...prev,
       text: event.target.value,
     }));
   };
 
-<<<<<<< HEAD
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    console.log("Submitted Data:", formData);
-
-    // Clear the formData
+  const resetForm = (): void => {
     setFormData({
       text: "",
       selectedGenres: [],
     });
 
     if (textAreaRef.current) {
-      textAreaRef.current.style.height = "auto"; // Reset height
-      textAreaRef.current.style.overflowY = "hidden"; // Reset scrollbar
-=======
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (!text.trim()) return;
-
-    setLoading(true);
-    setResponse(""); // Clear previous response
-
-    try {
-      const res = await fetch("/api/gpt4gen", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prompt: text }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch response from API");
-      }
-
-      const data = await res.json();
-      setResponse(data.response); // Adjust based on API response structure
-    } catch (error) {
-      console.error("Error fetching GPT-4 response:", error);
-      setResponse("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-      setText(""); // Clear the text area after submission
-      if (textAreaRef.current) {
-        textAreaRef.current.style.height = "auto"; // Reset height
-        textAreaRef.current.style.overflowY = "hidden"; // Reset scrollbar
-      }
->>>>>>> 4f1fc428a2c70ae100fd2091ba90fafd4ad4600b
+      textAreaRef.current.style.height = "auto";
+      textAreaRef.current.style.overflowY = "hidden";
     }
   };
 
-  const updateSelectedGenres = (updatedGenres: string[]) => {
-    setFormData((prevState) => ({
-      ...prevState,
+  const handleSubmit = async (event: FormEvent): Promise<void> => {
+    event.preventDefault();
+
+    if (!formData.text.trim()) return;
+    setLoading(true);
+
+    try {
+      // Generate lyrics using GPT-4
+      const gptResponse = await fetchGPTResponse(formData.text);
+
+      // Generate song using lyrics and genres
+      const songResponse = await fetchSongResponse(
+          formData.selectedGenres.join(", "),
+          gptResponse.response
+      );
+
+      setIframeSrc(songResponse.iframeSrc);
+    } catch (error) {
+      console.error("Error in submission process:", error);
+    } finally {
+      setLoading(false);
+      resetForm();
+    }
+  };
+
+  const updateSelectedGenres = (updatedGenres: string[]): void => {
+    setFormData((prev) => ({
+      ...prev,
       selectedGenres: updatedGenres,
     }));
   };
 
+  // API Calls
+  const fetchGPTResponse = async (prompt: string): Promise<APIResponse> => {
+    const response = await fetch("/api/gpt4gen", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch GPT-4 response");
+    }
+
+    return response.json();
+  };
+
+  const fetchSongResponse = async (
+      description: string,
+      lyrics: string
+  ): Promise<SongResponse> => {
+    const response = await fetch("/api/getsong", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ description, lyrics }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch song response");
+    }
+
+    return response.json();
+  };
+
   return (
-    <div className="container">
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className="block my-4 text-3xl font-bold text-gray-700">
-          How Was Your Day?
-        </div>
-        <div className="bg-beige-200 rounded-3xl shadow-lg w-full flex flex-col items-center justify-center max-w-2xl">
-          <form onSubmit={handleSubmit} className="w-full flex max-w-2xl">
+      <div className="container">
+        <div className="flex flex-col items-center justify-center min-h-screen">
+          <h1 className="block my-4 text-3xl font-bold text-gray-700">
+            How Was Your Day?
+          </h1>
+
+          <div className="bg-beige-200 rounded-3xl shadow-lg w-full flex flex-col items-center justify-center max-w-2xl">
+            <form onSubmit={handleSubmit} className="w-full flex max-w-2xl">
             <textarea
-              id="textArea"
-              ref={textAreaRef}
-              value={formData.text}
-              onChange={handleInput}
-              className="block w-5/6 p-4 text-gray-700 bg-transparent rounded-l-3xl focus:outline-none focus:border-blue-500 resize-none leading-7"
-              placeholder="Type something..."
-              rows={1}
-              style={{ lineHeight: "1.75rem" }}
-            ></textarea>
-            <button
-              type="submit"
-              className="transition-all ease-in duration-300 w-1/6 m-2 text-black bg-beige-300 rounded-3xl hover:bg-beige-400 focus:outline-none shadow-md"
-            >
-              Generate
-            </button>
-          </form>
-          <div className="w-full px-4 pb-2 flex max-w-2xl">
-            <GenreList
-              selectedGenres={formData.selectedGenres}
-              setSelectedGenres={updateSelectedGenres}
+                id="textArea"
+                ref={textAreaRef}
+                value={formData.text}
+                onChange={handleTextAreaInput}
+                className="block w-5/6 p-4 text-gray-700 bg-transparent rounded-l-3xl focus:outline-none focus:border-blue-500 resize-none"
+                placeholder="Type something..."
+                rows={1}
+                style={{ lineHeight: LINE_HEIGHT }}
+                disabled={loading}
             />
+
+              <button
+                  type="submit"
+                  className="transition-all ease-in duration-300 w-1/6 m-2 text-black bg-beige-300 rounded-3xl hover:bg-beige-400 focus:outline-none shadow-md"
+                  disabled={loading}
+              >
+                {loading ? "Generating..." : "Generate"}
+              </button>
+            </form>
+
+            <div className="w-full px-4 pb-2 flex max-w-2xl">
+              <GenreList
+                  selectedGenres={formData.selectedGenres}
+                  setSelectedGenres={updateSelectedGenres}
+              />
+            </div>
           </div>
         </div>
+
+        <Result iframeSrc={iframeSrc}/>
       </div>
-      <Result audioUrl={"../../Rev.mp3"} />
-    </div>
   );
 };
 
