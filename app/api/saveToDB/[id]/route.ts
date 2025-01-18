@@ -1,25 +1,27 @@
 import { NextResponse } from "next/server";
-import clientPromise from "../../../../src/mongolib";
+import clientPromise from "@/src/mongolib";
 import { ObjectId } from "mongodb";
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
     try {
         const { id } = params;
-        const { songEmbed, lyrics } = await req.json();
+        const { lyrics, additionalData } = await req.json();
 
-        // Validate input
-        if (!ObjectId.isValid(id) || (!songEmbed && !lyrics)) {
+        if (!ObjectId.isValid(id) || (!lyrics && !additionalData)) {
             return NextResponse.json({ error: "Invalid input" }, { status: 400 });
         }
 
         const client = await clientPromise;
-        const db = client.db("uottahack7"); // Replace with your database name
-        const collection = db.collection("prompts");
+        const db = client.db("uottahack7");
+        const collection = db.collection("posts");
 
-        // Update document in MongoDB
+        const updateData: Record<string, any> = {};
+        if (lyrics) updateData.lyrics = lyrics;
+        if (additionalData) updateData.additionalData = additionalData;
+
         const result = await collection.updateOne(
             { _id: new ObjectId(id) },
-            { $set: { songEmbed, lyrics } }
+            { $set: updateData }
         );
 
         if (result.modifiedCount === 0) {
