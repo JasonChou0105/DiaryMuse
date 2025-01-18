@@ -5,6 +5,12 @@ import Result from "./Result/Result";
 import GenreList from "./GenreList";
 
 const Home = () => {
+<<<<<<< HEAD
+=======
+  const [text, setText] = useState("");
+  const [response, setResponse] = useState(""); // To store GPT-4 response
+  const [loading, setLoading] = useState(false); // To manage loading state
+>>>>>>> 4f1fc428a2c70ae100fd2091ba90fafd4ad4600b
   const textAreaRef = useRef(null);
 
   // Object state to store both selected genres and user input
@@ -38,6 +44,7 @@ const Home = () => {
     }));
   };
 
+<<<<<<< HEAD
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     console.log("Submitted Data:", formData);
@@ -51,6 +58,40 @@ const Home = () => {
     if (textAreaRef.current) {
       textAreaRef.current.style.height = "auto"; // Reset height
       textAreaRef.current.style.overflowY = "hidden"; // Reset scrollbar
+=======
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!text.trim()) return;
+
+    setLoading(true);
+    setResponse(""); // Clear previous response
+
+    try {
+      const res = await fetch("/api/gpt4gen", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: text }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch response from API");
+      }
+
+      const data = await res.json();
+      setResponse(data.response); // Adjust based on API response structure
+    } catch (error) {
+      console.error("Error fetching GPT-4 response:", error);
+      setResponse("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+      setText(""); // Clear the text area after submission
+      if (textAreaRef.current) {
+        textAreaRef.current.style.height = "auto"; // Reset height
+        textAreaRef.current.style.overflowY = "hidden"; // Reset scrollbar
+      }
+>>>>>>> 4f1fc428a2c70ae100fd2091ba90fafd4ad4600b
     }
   };
 

@@ -45,3 +45,5 @@ src/Scripts
 src/pyvenv.cfg
 src/Lib
 src/share
+
+.idea
