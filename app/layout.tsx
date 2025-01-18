@@ -1,21 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { Playwrite_DE_Grund } from "next/font/google"; // Ensure this font is available
 import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 const playwrite = Playwrite_DE_Grund({
-  subsets: ["latin"],
   variable: "--font-playwrite-de-grund",
 });
 

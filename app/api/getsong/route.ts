@@ -1,15 +1,46 @@
-import {NextResponse} from "next/server";
+import { NextResponse } from "next/server";
 import udioapi from '../../../src/udioapi';
+
+// Define the expected request body structure
+interface SongRequest {
+    description: string;
+    lyrics: string;
+}
 
 export async function POST(request: Request) {
     try {
-        const result = await udioapi(request.description, request.lyrics);
+        // Parse the request body
+        const body: SongRequest = await request.json();
 
-        return NextResponse.json({ result });
+        // Validate the required fields
+        if (!body.description || !body.lyrics) {
+            return NextResponse.json(
+                { message: "Missing required fields: description and lyrics" },
+                { status: 400 }
+            );
+        }
+
+        // Call the udioapi with the correct parameters
+        const result = await udioapi(body.description, body.lyrics);
+
+        // Return the successful response
+        return NextResponse.json({ iframeSrc: result });
+
     } catch (error) {
-        console.error("Error interacting with OpenAI API:", error);
+        // Log the specific error
+        console.error("Error in /api/getsong:", error);
+
+        // Check if it's a parsing error
+        if (error instanceof SyntaxError) {
+            return NextResponse.json(
+                { message: "Invalid request body" },
+                { status: 400 }
+            );
+        }
+
+        // Return a generic error for other cases
         return NextResponse.json(
-            { message: "Error interacting with OpenAI API" },
+            { message: "Internal server error" },
             { status: 500 }
         );
     }
