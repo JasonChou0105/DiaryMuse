@@ -6,7 +6,24 @@
   --background: #ffffff;
   --foreground: #171717;
 }
+input[type="range"]::-webkit-slider-thumb {
+  width: 20px;                 /* Increase size of thumb */
+  height: 20px;
+  background: #585858;         /* Green color */
+  border-radius: 50%;          /* Circular thumb */
+  -webkit-appearance: none;    /* Remove default appearance */
+  cursor: pointer;
+  transition: background 0.3s ease; /* Smooth transition on hover */
+}
+/* styles/globals.css */
+body {
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+  font-family: 'Roboto', sans-serif;
+}
 
+input[type="range"]:hover::-webkit-slider-thumb {
+  background: #6c6b6b;         /* Darker green on hover */
+}
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
