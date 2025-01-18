@@ -6,7 +6,9 @@
   --background: #f7f6f2;
   --foreground: #171717;
 }
-
+html {
+  @apply font-sans;
+}
 body {
   color: var(--foreground);
   background: var(--background);
