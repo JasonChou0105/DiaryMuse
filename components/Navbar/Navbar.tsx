@@ -26,7 +26,7 @@ function Navbar() {
               <IoPersonOutline size={20} color="black" className="m-1" />
             </Link>
             <Link
-              href="/cart"
+              href="/explore"
               className="mx-2 flex rounded-full bg-orange-700 px-4 py-2 justify-center text-stone-200 hover:text-stone-700 items-center border-2 border-orange-700 hover:bg-transparent transition-all ease-in-out duration-400"
             >
               <MdTravelExplore size={20} color="white" className="mr-2" />
