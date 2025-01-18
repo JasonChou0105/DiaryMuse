@@ -35,6 +35,7 @@ const Home: React.FC = () => {
     text: "",
     selectedGenres: [],
   });
+  const [dbEntryId, setDbEntryId] = useState<string | null>(null); // ID for MongoDB document
 
   // Refs
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -84,15 +85,30 @@ const Home: React.FC = () => {
     setLoading(true);
 
     try {
+      // Save initial data to MongoDB
+      const savedEntry = await saveToDB({
+        prompt: formData.text,
+        genres: formData.selectedGenres,
+        user: "", // Replace with actual user identifier if available
+        date: new Date().toISOString(),
+      });
+
+      setDbEntryId(savedEntry._id);
+
       // Generate lyrics using GPT-4
       const gptResponse = await fetchGPTResponse(formData.text);
-
 
       // Generate song using lyrics and genres
       const songResponse = await fetchSongResponse(
           formData.selectedGenres.join(", "),
           gptResponse.response
       );
+
+      // Update MongoDB entry with song embed and lyrics
+      await updateDBEntry(savedEntry._id, {
+        songEmbed: songResponse.iframeSrc,
+        lyrics: gptResponse.response,
+      });
 
       setIframeSrc(songResponse.iframeSrc);
     } catch (error) {
@@ -142,6 +158,40 @@ const Home: React.FC = () => {
     return response.json();
   };
 
+  const saveToDB = async (data: {
+    prompt: string;
+    genres: string[];
+    user: string;
+    date: string;
+  }): Promise<{ _id: string }> => {
+    const response = await fetch("/api/saveToDB", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to save data to database");
+    }
+
+    return response.json();
+  };
+
+  const updateDBEntry = async (
+      id: string,
+      update: { songEmbed: string; lyrics: string }
+  ): Promise<void> => {
+    const response = await fetch(`/api/saveToDB/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(update),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update database entry");
+    }
+  };
+
   return (
       <div className="container">
         <div className="flex flex-col items-center justify-center min-h-screen">
@@ -181,7 +231,7 @@ const Home: React.FC = () => {
           </div>
         </div>
 
-        <Result iframeSrc={iframeSrc}/>
+        <Result iframeSrc={iframeSrc} />
       </div>
   );
 };
