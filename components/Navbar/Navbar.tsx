@@ -11,10 +11,10 @@ function Navbar() {
         <div className=" text-3xl text-stone-700 font-black">Music Diary</div>
         <div className="flex flex-row justify-center items-center space-between">
           <div className="mx-8 flex flex-row space-between items-center justify-between">
-            <Link href="/" className="mx-4">
+            <Link href="/explore" className="mx-4">
               Explore
             </Link>
-            <Link href="/menu" className="mx-4">
+            <Link href="/" className="mx-4">
               Today
             </Link>
           </div>
