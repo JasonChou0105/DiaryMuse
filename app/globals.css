@@ -3,12 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --background: #f5f0e6;
+  --background: #f7f6f2;
   --foreground: #171717;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
 }

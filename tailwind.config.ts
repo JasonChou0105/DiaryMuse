@@ -14,17 +14,14 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
         beige: {
-          100: "#FFFFFF", // Input Field White (lightest)
-          200: "#F5F0E6", // Background Beige
-          300: "#EDE6D6", // Icon Light Beige
-          400: "#E4DCCD", // Button Beige
-          500: "#D6C9B7", // Button Highlight Beige
-          600: "#4A4A4A", // Body Text Gray
-          700: "#000000", // Header Black (darkest)
+          100: "#F7F6F2", // Baby Powder (lightest)
+          200: "#EFEDE6", // Alabaster
+          300: "#DFD6C8", // Bone
+          400: "#BFBCB7", // Silver (darkest)
         },
       },
       fontFamily: {
-        sans: ["Roboto", "sans-serif"],
+        sans: ["var(--font-playwrite-de-grund)", "sans-serif"], // Override the default sans font
       },
     },
   },
