@@ -1,6 +1,10 @@
 import clientPromise from "@/src/mongolib"; // Adjust the path as necessary
 
 // Function to get all posts from a specific user
+
+// Function to get the audio file for a specific post by its prompt
+import {MongoClient} from "mongodb";
+
 export async function getPostsByUser(user) {
   try {
     const client = await clientPromise;
@@ -14,9 +18,6 @@ export async function getPostsByUser(user) {
     throw new Error("Failed to fetch posts by user");
   }
 }
-
-// Function to get the audio file for a specific post by its prompt
-const { MongoClient } = require("mongodb");
 
 export default async function fetchAudioFiles() {
   const uri = "your_mongodb_connection_string";
