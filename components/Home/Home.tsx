@@ -184,7 +184,7 @@ const Home: React.FC = () => {
           </div>
         </div>
       </div>
-      <Result />
+      {dataRetrived && <Result />}
     </div>
   );
 };
