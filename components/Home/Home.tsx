@@ -199,28 +199,34 @@ const Home: React.FC = () => {
             How Was Your Day?
           </h1>
 
-          <div className="bg-beige-200 rounded-3xl shadow-lg w-full flex flex-col items-center justify-center max-w-2xl">
+          <div
+              className="bg-beige-200 rounded-3xl shadow-lg w-full flex flex-col items-center justify-center max-w-2xl">
             <form onSubmit={handleSubmit} className="w-full flex max-w-2xl">
-            <textarea
-                id="textArea"
-                ref={textAreaRef}
-                value={formData.text}
-                onChange={handleTextAreaInput}
-                className="block w-5/6 p-4 text-gray-700 bg-transparent rounded-l-3xl focus:outline-none focus:border-blue-500 resize-none"
-                placeholder="Type something..."
-                rows={1}
-                style={{ lineHeight: LINE_HEIGHT }}
-                disabled={loading}
-            />
+              <textarea
+                  id="textArea"
+                  ref={textAreaRef}
+                  value={formData.text}
+                  onChange={handleTextAreaInput}
+                  className="block w-5/6 p-4 text-gray-700 bg-transparent rounded-l-3xl focus:outline-none focus:border-blue-500 resize-none"
+                  placeholder="Type something..."
+                  rows={1}
+                  style={{lineHeight: LINE_HEIGHT}}
+                  disabled={loading} // Prevent text input while loading
+              />
 
               <button
                   type="submit"
-                  className="transition-all ease-in duration-300 w-1/6 m-2 text-black bg-beige-300 rounded-3xl hover:bg-beige-400 focus:outline-none shadow-md"
-                  disabled={loading}
+                  className={`transition-all ease-in duration-300 w-1/6 m-2 rounded-3xl ${
+                      loading
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-beige-300 hover:bg-beige-400 text-black shadow-md"
+                  }`}
+                  disabled={loading} // Disable button while loading
               >
                 {loading ? "Generating..." : "Generate"}
               </button>
             </form>
+
 
             <div className="w-full px-4 pb-2 flex max-w-2xl">
               <GenreList
@@ -231,7 +237,7 @@ const Home: React.FC = () => {
           </div>
         </div>
 
-        <Result iframeSrc={iframeSrc} />
+        <Result iframeSrc={iframeSrc}/>
       </div>
   );
 };
