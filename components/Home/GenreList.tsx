@@ -36,12 +36,12 @@ const GenreList: React.FC<GenreListProps> = ({
   };
 
   return (
-    <div className="flex flex-wrap gap-3 justify-center w-full">
+    <div className="flex justify-between w-full">
       {musicGenres.map((genre, index) => (
         <button
           key={index}
           onClick={() => handleGenreClick(genre)}
-          className={`py-1 px-3 rounded-full text-sm font-medium transition-colors duration-300 ${
+          className={`py-1 px-3 min-w-16 rounded-full text-sm font-medium transition-colors duration-300 ${
             selectedGenres.includes(genre)
               ? "bg-blue-500 text-white"
               : "bg-gray-300 text-gray-700 hover:bg-gray-400"
