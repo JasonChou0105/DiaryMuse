@@ -1,35 +1,7 @@
-"use client";
-import { useEffect, useState } from "react";
 import SongCard from "./SongCard";
 
 function Explore() {
-  const [songs, setSongs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    // Fetch songs from the API
-    const fetchSongs = async () => {
-      try {
-        const response = await fetch("/api/posts/all", { method: "GET" });
-        if (!response.ok) {
-          throw new Error(`Error fetching songs: ${response.statusText}`);
-        }
-        const data = await response.json();
-        setSongs(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSongs();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  //name, embed, lyrics, date made, likes, caption, prompt, genre
 
   if (error) {
     return <div>Error: {error}</div>;
