@@ -4,10 +4,24 @@ import React from "react";
 import AudioPlayer from "./AudioPlayer";
 import { FaHeart } from "react-icons/fa";
 
-const SongPage = ({ song, liked, toggleLike }) => {
+const song = {
+  prompt:
+    "I woke up feeling inspired after a long run and a motivating podcast.",
+  caption: "A song about pursuing your passions and dreams.",
+  title: "Chasing Dreams",
+  likes: 120,
+  genres: ["Pop", "Electronic"],
+  user: "User1",
+  date: "2025-01-01",
+  audioFile:
+    "https://storage.googleapis.com/udio-artifacts-c33fe3ba-3ffe-471f-92c8-5dfef90b3ea3/samples/5f32c095998d4bbd84f481cd3587a4c3/1/The%2520Untitled.mp3",
+  lyrics: "Dreaming high, chasing skies, never let go of the fire inside.",
+  visibility: "Public",
+};
+const SongPage = () => {
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4">
-      <div className="bg-white shadow-lg rounded-lg w-full max-w-4xl">
+    <div className="min-h-screen bg-beige-100 flex justify-center items-center p-4">
+      <div className="shadow-lg rounded-lg w-full max-w-4xl">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center">
@@ -54,10 +68,7 @@ const SongPage = ({ song, liked, toggleLike }) => {
         <div className="p-4 border-t flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <button
-              onClick={toggleLike}
-              className={`transition-all duration-100 ease-in text-xl ${
-                liked ? "text-red-500" : "text-gray-400"
-              }`}
+              className={`transition-all duration-100 ease-in text-xl text-red-500`}
             >
               <FaHeart />
             </button>

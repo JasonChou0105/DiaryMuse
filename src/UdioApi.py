@@ -28,7 +28,7 @@ def perform_actions():
 
         pyautogui.moveTo(677, 882)
         pyautogui.click()
-        time.sleep(65)  # Add a small delay for the action to process
+        time.sleep(90)  # Add a small delay for the action to process
         
         pyautogui.moveTo(1865, 276) #menu
         pyautogui.click()

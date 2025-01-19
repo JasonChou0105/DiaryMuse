@@ -19,7 +19,7 @@ function SongCard({ song }) {
   };
 
   return (
-    <div className="w-[530px] border border-gray-300 rounded-lg shadow-lg bg-beige-200">
+    <div className="w-full border border-gray-300 rounded-lg shadow-lg bg-beige-200">
       <Link
         className="text-2xl font-bold p-4 mx-4 my-16"
         href={{
@@ -29,7 +29,7 @@ function SongCard({ song }) {
         {song.title}
       </Link>
       {/* Embed Section */}
-      <div className="w-[530px] rounded-lg overflow-hidden bg-white">
+      <div className="w-full rounded-lg overflow-hidden bg-white">
         <AudioPlayer audioUrl={song.audioFile} />
       </div>
 
