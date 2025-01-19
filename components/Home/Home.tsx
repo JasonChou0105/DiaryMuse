@@ -26,7 +26,9 @@ const Home: React.FC = () => {
     text: "",
     selectedGenres: [],
   });
+  const [songData, setSongData] = useState()
   const [error, setError] = useState<string | null>(null);
+  const sectionRef = useRef();
 
   // Refs
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -84,6 +86,7 @@ const Home: React.FC = () => {
         date: new Date().toISOString(),
         lyrics: gptResponse.response,
       });
+      console.log(formData.text)
 
       resetForm();
     } catch (error) {
@@ -139,9 +142,11 @@ const Home: React.FC = () => {
     date: string;
     audioFile: string;
     lyrics: string;
+    visibility: string;
   }): Promise<{ _id: string }> => {
     console.log("data", data);
-    return apiRequest("/api/saveDB", "POST", data);
+    setSongData(data)
+    return data;
   };
 
   return (
@@ -184,7 +189,7 @@ const Home: React.FC = () => {
           </div>
         </div>
       </div>
-      {dataRetrived && <Result songData={saveToDB} />}
+      {dataRetrived && <Result sectionRef={sectionRef}  songData={songData} />}
     </div>
   );
 };
