@@ -26,30 +26,43 @@ def perform_actions():
         pyautogui.typewrite(lyrics)
         time.sleep(0.5)  # Add a small delay for the action to process
 
-        pyautogui.moveTo(677, 882)
-        pyautogui.click()
-        time.sleep(60)  # Add a small delay for the action to process
+        # pyautogui.moveTo(677, 882)
+        # pyautogui.click()
+        # time.sleep(60)  # Add a small delay for the action to process
         
-        pyautogui.moveTo(1865, 276)
+        pyautogui.moveTo(1865, 276) #menu
         pyautogui.click()
         time.sleep(0.5)
         
-        pyautogui.moveTo(1751, 460)
+        pyautogui.moveTo(1761, 517) #downloads
         pyautogui.click()
         time.sleep(0.5)
 
-        pyautogui.moveTo(705, 321)
+        pyautogui.moveTo(722, 416) #dropdown
         pyautogui.click()
         time.sleep(0.5)
 
-        pyautogui.moveTo(1176, 451)
+        pyautogui.moveTo(702, 488) #select
         pyautogui.click()
         time.sleep(0.5)
+
+        pyautogui.moveTo(732, 644) #right click
+        pyautogui.rightClick()
+        time.sleep(0.5)
+
+        pyautogui.moveTo(751, 613) #inspect
+        pyautogui.click()
+        time.sleep(0.5)
+
+        pyautogui.moveTo(1488, 309) #copy
+        pyautogui.doubleClick()
+        time.sleep(0.5)
+        pyautogui.hotkey("ctrl", "c")
 
         clipboard_data = pyperclip.paste()
 
         # Return the clipboard contents as JSON
-        return jsonify({"message": "Actions performed successfully", "embed": clipboard_data}), 200
+        return jsonify({"message": "Actions performed successfully", "link": clipboard_data}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
