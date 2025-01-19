@@ -26,9 +26,9 @@ def perform_actions():
         pyautogui.typewrite(lyrics)
         time.sleep(0.5)  # Add a small delay for the action to process
 
-        # pyautogui.moveTo(677, 882)
-        # pyautogui.click()
-        # time.sleep(60)  # Add a small delay for the action to process
+        pyautogui.moveTo(677, 882)
+        pyautogui.click()
+        time.sleep(60)  # Add a small delay for the action to process
         
         pyautogui.moveTo(1865, 276) #menu
         pyautogui.click()

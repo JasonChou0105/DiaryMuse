@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Lyrics from "./Lyrics";
 import AudioPlayer from "./AudioPlayer";
 
-const Result = (audioFile) => {
+const Result = () => {
   const [formData, setFormData] = useState({
     title: "",
     caption: "",
@@ -27,45 +27,52 @@ const Result = (audioFile) => {
   };
 
   return (
-    <div className="flex flex-col items-center p-4 mt-24">
-      <div className="text-3xl w-2/3 mb-6 pb-2 font-bold border-b-2 border-beige-300">
-        {formData.title || "Title Placeholder"}
+    <div className="flex flex-col items-center justify-center p-24 mt-24">
+      <div className="text-3xl w-full mb-6 pb-2 font-bold border-b-2 border-beige-300">
+        Cutomize Your Entry
       </div>
+      <div className="w-full flex flex-row justify-center items-center">
+        <div className="flex flex-col w-1/2 h-80">
+          <AudioPlayer
+            audioUrl={
+              "https://storage.googleapis.com/udio-artifacts-c33fe3ba-3ffe-471f-92c8-5dfef90b3ea3/samples/213e499f134c44a5a40858410a073c6a/1/The%2520Untitled.mp3"
+            }
+          />
+          <Lyrics />
+        </div>
 
-      <AudioPlayer audioUrl={audioFile} />
-      <Lyrics caption={formData.caption || "Caption Placeholder"} />
+        <div className="w-1/2 p-6 bg-beige-200 shadow-md h-80 ml-4 rounded-md flex flex-col">
+          <input
+            type="text"
+            name="title"
+            placeholder="Enter Title"
+            value={formData.title}
+            onChange={handleInputChange}
+            className="w-full p-2 mb-4 border rounded-md shadow-md bg-beige-100 focus:outline-none"
+          />
 
-      <div className="w-full bottom-0 p-4 bg-white shadow-md flex flex-col items-center">
-        <input
-          type="text"
-          name="title"
-          placeholder="Enter Title"
-          value={formData.title}
-          onChange={handleInputChange}
-          className="w-2/3 p-2 mb-2 border rounded-md shadow-md"
-        />
+          <textarea
+            name="caption"
+            placeholder="Enter Caption"
+            value={formData.caption}
+            onChange={handleInputChange}
+            className="w-full h-full mb-4 p-2 border rounded-md bg-beige-100 shadow-md h-28 focus:outline-none resize-none"
+          ></textarea>
 
-        <textarea
-          name="caption"
-          placeholder="Enter Caption"
-          value={formData.caption}
-          onChange={handleInputChange}
-          className="w-2/3 p-2 mb-2 border rounded-md shadow-md h-20"
-        ></textarea>
-
-        <div className="flex w-2/3 justify-between">
-          <button
-            onClick={handleSavePrivate}
-            className="w-1/2 p-2 mr-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition"
-          >
-            Save Privately
-          </button>
-          <button
-            onClick={handlePostPublic}
-            className="w-1/2 p-2 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600 transition"
-          >
-            Post Publicly
-          </button>
+          <div className="flex mt-auto w-full">
+            <button
+              onClick={handleSavePrivate}
+              className="w-1/2 p-2 mr-2 bg-stone-300 text-white rounded-md shadow-md hover:bg-stone-400 transition duration-300 focus:outline-none"
+            >
+              Save Privately
+            </button>
+            <button
+              onClick={handlePostPublic}
+              className="w-1/2 p-2 bg-beige-300 text-white rounded-md shadow-md hover:bg-beige-400 transition duration-300 focus:outline-none"
+            >
+              Post Publicly
+            </button>
+          </div>
         </div>
       </div>
     </div>
