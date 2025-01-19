@@ -5,7 +5,6 @@ import React, {
   useRef,
   ChangeEvent,
   FormEvent,
-  useEffect,
 } from "react";
 import Result from "./Result/Result";
 import GenreList from "./GenreList";
@@ -27,7 +26,6 @@ const LINE_HEIGHT = "1.75rem";
 const Home: React.FC = () => {
   // State
   const [loading, setLoading] = useState(false);
-  const [audioFile, setAudioFile] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
     text: "",
     selectedGenres: [],
@@ -82,28 +80,15 @@ const Home: React.FC = () => {
 
       console.log("audio", audioFile);
 
-      const savedEntry = await saveToDB({
+      await saveToDB({
         prompt: formData.text,
         genres: formData.selectedGenres,
         user: "", // Replace with actual user identifier if available
+        audioFile: audioFile,
         date: new Date().toISOString(),
-      });
-
-      setDbEntryId(savedEntry._id);
-
-      const gptResponse = await fetchGPTResponse(formData.text);
-
-      const audioFile = await fetchSongResponse(
-        formData.selectedGenres.join(", "),
-        gptResponse.response
-      );
-
-      await updateDBEntry(savedEntry._id, {
-        audioFile,
         lyrics: gptResponse.response,
       });
 
-      setAudioFile(audioFile);
       resetForm();
     } catch (error) {
       console.error("Error in submission process:", error);
@@ -135,23 +120,6 @@ const Home: React.FC = () => {
 
     return response.json();
   };
-  useEffect(() => {
-    const fetchAudioFile = async () => {
-      try {
-        const response = await fetch("/api/getAudioFile");
-        if (!response.ok) {
-          throw new Error("Failed to fetch audio file");
-        }
-        const data = await response.json();
-        setAudioFile(data.url); // Assuming `url` contains the audio file link
-      } catch (error) {
-        console.error("Error fetching audio file:", error);
-        setError("Failed to fetch audio file.");
-      }
-    };
-
-    fetchAudioFile();
-  }, []);
 
   const fetchGPTResponse = (prompt: string): Promise<APIResponse> => {
     return apiRequest("/api/gpt4gen", "POST", { prompt });
@@ -217,12 +185,7 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      <Result
-        audioFile={
-          audioFile ||
-          "https://storage.googleapis.com/udio-artifacts-c33fe3ba-3ffe-471f-92c8-5dfef90b3ea3/samples/213e499f134c44a5a40858410a073c6a/1/The%2520Untitled.mp3"
-        }
-      />
+      <Result />
     </div>
   );
 };
