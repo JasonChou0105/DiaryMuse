@@ -14,10 +14,6 @@ interface APIResponse {
   response: string;
 }
 
-interface SongResponse {
-  iframeSrc: string;
-}
-
 interface TextAreaStyles {
   height: string;
   overflowY: "hidden" | "auto";
@@ -29,51 +25,34 @@ const LINE_HEIGHT = "1.75rem";
 
 const Home: React.FC = () => {
   // State
-  const [loading, setLoading] = useState<boolean>(false);
-  const [iframeSrc, setIframeSrc] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const [audioFile, setAudioFile] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
     text: "",
     selectedGenres: [],
   });
-  const [dbEntryId, setDbEntryId] = useState<string | null>(null); // ID for MongoDB document
+  const [dbEntryId, setDbEntryId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Refs
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   // Handlers
-  const handleTextAreaInput = (
-    event: ChangeEvent<HTMLTextAreaElement>
-  ): void => {
+  const handleTextAreaInput = (event: ChangeEvent<HTMLTextAreaElement>): void => {
     const textarea = textAreaRef.current;
     if (!textarea) return;
 
-    const updateTextAreaHeight = (): TextAreaStyles => {
-      // Reset height to recalculate
-      textarea.style.height = "auto";
-      const newHeight = textarea.scrollHeight;
+    textarea.style.height = "auto";
+    const newHeight = textarea.scrollHeight;
+    textarea.style.height = `${Math.min(newHeight, MAX_TEXTAREA_HEIGHT)}px`;
+    textarea.style.overflowY = newHeight > MAX_TEXTAREA_HEIGHT ? "auto" : "hidden";
 
-      return {
-        height: `${Math.min(newHeight, MAX_TEXTAREA_HEIGHT)}px`,
-        overflowY: newHeight <= MAX_TEXTAREA_HEIGHT ? "hidden" : "auto",
-      };
-    };
-
-    const styles = updateTextAreaHeight();
-    textarea.style.height = styles.height;
-    textarea.style.overflowY = styles.overflowY;
-
-    setFormData((prev) => ({
-      ...prev,
-      text: event.target.value,
-    }));
+    setFormData((prev) => ({ ...prev, text: event.target.value }));
   };
 
   const resetForm = (): void => {
-    setFormData({
-      text: "",
-      selectedGenres: [],
-    });
-
+    setFormData({ text: "", selectedGenres: [] });
+    setError(null);
     if (textAreaRef.current) {
       textAreaRef.current.style.height = "auto";
       textAreaRef.current.style.overflowY = "hidden";
@@ -82,12 +61,15 @@ const Home: React.FC = () => {
 
   const handleSubmit = async (event: FormEvent): Promise<void> => {
     event.preventDefault();
+    if (!formData.text.trim()) {
+      setError("Text cannot be empty.");
+      return;
+    }
 
-    if (!formData.text.trim()) return;
     setLoading(true);
+    setError(null);
 
     try {
-      // Save initial data to MongoDB
       const savedEntry = await saveToDB({
         prompt: formData.text,
         genres: formData.selectedGenres,
@@ -97,144 +79,119 @@ const Home: React.FC = () => {
 
       setDbEntryId(savedEntry._id);
 
-      // Generate lyrics using GPT-4
       const gptResponse = await fetchGPTResponse(formData.text);
 
-      // Generate song using lyrics and genres
-      const songResponse = await fetchSongResponse(
-        formData.selectedGenres.join(", "),
-        gptResponse.response
+      const audioFile = await fetchSongResponse(
+          formData.selectedGenres.join(", "),
+          gptResponse.response
       );
 
-      // Update MongoDB entry with song embed and lyrics
       await updateDBEntry(savedEntry._id, {
-        songEmbed: songResponse.iframeSrc,
+        audioFile,
         lyrics: gptResponse.response,
       });
 
-      setIframeSrc(songResponse.iframeSrc);
+      setAudioFile(audioFile);
+      resetForm();
     } catch (error) {
       console.error("Error in submission process:", error);
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
-      resetForm();
     }
   };
 
   const updateSelectedGenres = (updatedGenres: string[]): void => {
-    setFormData((prev) => ({
-      ...prev,
-      selectedGenres: updatedGenres,
-    }));
+    setFormData((prev) => ({ ...prev, selectedGenres: updatedGenres }));
   };
 
-  // API Calls
-  const fetchGPTResponse = async (prompt: string): Promise<APIResponse> => {
-    const response = await fetch("/api/gpt4gen", {
-      method: "POST",
+  // API Utility Functions
+  const apiRequest = async (
+      url: string,
+      method: string,
+      body: Record<string, unknown>
+  ): Promise<any> => {
+    const response = await fetch(url, {
+      method,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt }),
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch GPT-4 response");
+      throw new Error(`API request failed with status ${response.status}`);
     }
 
     return response.json();
   };
 
-  const fetchSongResponse = async (
-    description: string,
-    lyrics: string
-  ): Promise<SongResponse> => {
-    const response = await fetch("/api/getsong", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ description, lyrics }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch song response");
-    }
-
-    return response.json();
+  const fetchGPTResponse = (prompt: string): Promise<APIResponse> => {
+    return apiRequest("/api/gpt4gen", "POST", { prompt });
   };
 
-  const saveToDB = async (data: {
+  const fetchSongResponse = (
+      description: string,
+      lyrics: string
+  ): Promise<{ audioFile: string }> => {
+    return apiRequest("/api/getsong", "POST", { description, lyrics });
+  };
+
+  const saveToDB = (data: {
     prompt: string;
     genres: string[];
     user: string;
     date: string;
   }): Promise<{ _id: string }> => {
-    const response = await fetch("/api/saveToDB", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to save data to database");
-    }
-
-    return response.json();
+    return apiRequest("/api/saveToDB", "POST", data);
   };
 
-  const updateDBEntry = async (
-    id: string,
-    update: { songEmbed: string; lyrics: string }
+  const updateDBEntry = (
+      id: string,
+      update: { audioFile: string; lyrics: string }
   ): Promise<void> => {
-    const response = await fetch(`/api/saveToDB/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(update),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to update database entry");
-    }
+    return apiRequest(`/api/saveToDB/${id}`, "PATCH", update);
   };
 
   return (
-    <div className="container">
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <h1 className="block my-4 text-3xl font-bold text-gray-700">
-          How Was Your Day?
-        </h1>
+      <div className="container">
+        <div className="flex flex-col items-center justify-center min-h-screen">
+          <h1 className="my-4 text-3xl font-bold text-gray-700">How Was Your Day?</h1>
 
-        <div className="bg-beige-200 rounded-3xl shadow-lg w-full flex flex-col items-center justify-center max-w-2xl">
-          <form onSubmit={handleSubmit} className="w-full flex max-w-2xl">
+          <div className="bg-beige-200 rounded-3xl shadow-lg w-full flex flex-col items-center justify-center max-w-2xl">
+            <form onSubmit={handleSubmit} className="w-full max-w-2xl flex">
             <textarea
-              id="textArea"
-              ref={textAreaRef}
-              value={formData.text}
-              onChange={handleTextAreaInput}
-              className="block w-5/6 p-4 text-gray-700 bg-transparent rounded-l-3xl focus:outline-none focus:border-blue-500 resize-none"
-              placeholder="Type something..."
-              rows={1}
-              style={{ lineHeight: LINE_HEIGHT }}
-              disabled={loading}
+                id="textArea"
+                ref={textAreaRef}
+                value={formData.text}
+                onChange={handleTextAreaInput}
+                className="block w-5/6 p-4 text-gray-700 bg-transparent rounded-l-3xl focus:outline-none focus:border-blue-500 resize-none"
+                placeholder="Type something..."
+                rows={1}
+                style={{ lineHeight: LINE_HEIGHT }}
+                disabled={loading}
             />
 
-            <button
-              type="submit"
-              className="transition-all ease-in duration-300 w-1/6 m-2 text-black bg-beige-300 rounded-3xl hover:bg-beige-400 focus:outline-none shadow-md"
-              disabled={loading}
-            >
-              {loading ? "Generating..." : "Generate"}
-            </button>
-          </form>
+              <button
+                  type="submit"
+                  className="transition-all ease-in duration-300 w-1/6 m-2 text-black bg-beige-300 rounded-3xl hover:bg-beige-400 focus:outline-none shadow-md"
+                  disabled={loading}
+              >
+                {loading ? "Generating..." : "Generate"}
+              </button>
+            </form>
 
-          <div className="w-full px-4 pb-2 flex max-w-2xl">
-            <GenreList
-              selectedGenres={formData.selectedGenres}
-              setSelectedGenres={updateSelectedGenres}
-            />
+            {error && <p className="text-red-500 mt-2">{error}</p>}
+
+            <div className="w-full px-4 pb-2 flex max-w-2xl">
+              <GenreList
+                  selectedGenres={formData.selectedGenres}
+                  setSelectedGenres={updateSelectedGenres}
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      <Result iframeSrc={iframeSrc} />
-    </div>
+        <Result audioFile={audioFile || 'https://storage.googleapis.com/udio-artifacts-c33fe3ba-3ffe-471f-92c8-5dfef90b3ea3/samples/213e499f134c44a5a40858410a073c6a/1/The%2520Untitled.mp3'} />
+      </div>
   );
 };
 

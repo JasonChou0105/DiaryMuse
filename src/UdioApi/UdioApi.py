@@ -62,7 +62,7 @@ def perform_actions():
         clipboard_data = pyperclip.paste()
 
         # Return the clipboard contents as JSON
-        return jsonify({"message": "Actions performed successfully", "link": clipboard_data}), 200
+        return jsonify({"message": "Actions performed successfully", "file": clipboard_data}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500

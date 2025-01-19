@@ -39,7 +39,7 @@ export async function POST(request: Request) {
         console.log(data.link);
 
         // Return the successful response
-        return NextResponse.json({ iframeSrc: data.link }) //TODO
+        return NextResponse.json({ audioFile: data.link }) //TODO
     } catch (error) {
         // Log the specific error
         console.error("Error in /api/getsong:", error);
