@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import WaveSurfer from "wavesurfer.js";
-import { FaPlay, FaPause } from "react-icons/fa";
+import React, { useState } from "react";
 import Lyrics from "./Lyrics";
 import AudioPlayer from "./AudioPlayer";
 
-const Result = () => {
+const Result = (audioFile) => {
   const [formData, setFormData] = useState({
     title: "",
     caption: "",
@@ -34,7 +32,7 @@ const Result = () => {
         {formData.title || "Title Placeholder"}
       </div>
 
-      <AudioPlayer audioUrl={"../../../Rev.mp3"} />
+      <AudioPlayer audioUrl={audioFile} />
       <Lyrics caption={formData.caption || "Caption Placeholder"} />
 
       <div className="w-full bottom-0 p-4 bg-white shadow-md flex flex-col items-center">
