@@ -184,7 +184,7 @@ const Home: React.FC = () => {
           </div>
         </div>
       </div>
-      {dataRetrived && <Result />}
+      {dataRetrived && <Result songData={saveToDB} />}
     </div>
   );
 };

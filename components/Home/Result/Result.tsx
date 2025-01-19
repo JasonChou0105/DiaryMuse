@@ -4,12 +4,11 @@ import React, { useState, useRef, useEffect } from "react";
 import Lyrics from "./Lyrics";
 import AudioPlayer from "../../AudioPlayer";
 
-const Result = () => {
+const Result = ({ songData }) => {
   const [formData, setFormData] = useState({
     title: "",
     caption: "",
   });
-  const [songData, setSongData] = useState({});
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -26,20 +25,6 @@ const Result = () => {
   const handlePostPublic = () => {
     console.log("Posted publicly:", formData);
   };
-  useEffect(() => {
-    fetch("/api/getAudioFile")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok " + response.statusText);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setSongData(data);
-        console.log("AHSUHAU", data);
-      })
-      .catch((error) => console.error("There was an error:", error));
-  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center p-24 mt-24">
@@ -48,7 +33,7 @@ const Result = () => {
       </div>
       <div className="w-full flex flex-row justify-center items-center">
         <div className="flex flex-col w-1/2 h-80">
-          <AudioPlayer audioUrl={songData} />
+          <AudioPlayer audioUrl={songData.file} />
           <Lyrics />
         </div>
 
