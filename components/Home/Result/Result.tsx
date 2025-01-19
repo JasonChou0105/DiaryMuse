@@ -10,6 +10,7 @@ const Result = () => {
     title: "",
     caption: "",
   });
+  const [songData, setSongData] = useState({});
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -34,7 +35,7 @@ const Result = () => {
         }
         return response.json();
       })
-      .then((data) => console.log(data))
+      .then((data) => setSongData(data))
       .catch((error) => console.error("There was an error:", error));
   }, []);
 
@@ -45,11 +46,7 @@ const Result = () => {
       </div>
       <div className="w-full flex flex-row justify-center items-center">
         <div className="flex flex-col w-1/2 h-80">
-          <AudioPlayer
-            audioUrl={
-              "https://storage.googleapis.com/udio-artifacts-c33fe3ba-3ffe-471f-92c8-5dfef90b3ea3/samples/213e499f134c44a5a40858410a073c6a/1/The%2520Untitled.mp3"
-            }
-          />
+          <AudioPlayer audioUrl={songData.audioFile} />
           <Lyrics />
         </div>
 
