@@ -26,7 +26,7 @@ const Home: React.FC = () => {
     text: "",
     selectedGenres: [],
   });
-  const [songData, setSongData] = useState()
+  const [songData, setSongData] = useState();
   const [error, setError] = useState<string | null>(null);
   const sectionRef = useRef();
 
@@ -86,7 +86,7 @@ const Home: React.FC = () => {
         date: new Date().toISOString(),
         lyrics: gptResponse.response,
       });
-      console.log(formData.text)
+      console.log(formData.text);
 
       resetForm();
     } catch (error) {
@@ -145,7 +145,7 @@ const Home: React.FC = () => {
     visibility: string;
   }): Promise<{ _id: string }> => {
     console.log("data", data);
-    setSongData(data)
+    setSongData(data);
     return data;
   };
 
@@ -189,7 +189,7 @@ const Home: React.FC = () => {
           </div>
         </div>
       </div>
-      {dataRetrived && <Result sectionRef={sectionRef}  songData={songData} />}
+      {dataRetrived && <Result sectionRef={sectionRef} songData={songData} />}
     </div>
   );
 };
