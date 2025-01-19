@@ -19,7 +19,7 @@ export async function POST(request: Request) {
                 { role: "system", content: "You are writing song lyrics, based on how the user describes their day went. " +
                         "You will make the lyrics relevant to the experiences and follow the mood of the experiences (i.e. " +
                         "writing sadder lyrics for the sad experiences, and upbeat lyrics for the happy ones. Keep it to " +
-                        "five lines of lyrics." },
+                        "two lines of lyrics." }, //TODO
                 { role: "user", content: prompt },
             ],
         });

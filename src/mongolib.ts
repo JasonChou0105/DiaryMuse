@@ -11,17 +11,28 @@ const options = {};
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
-if (process.env.NODE_ENV === "development") {
-    // In development, use a global variable
-    if (!global._mongoClientPromise) {
+try {
+    if (process.env.NODE_ENV === "development") {
+        if (!global._mongoClientPromise) {
+            client = new MongoClient(uri, options);
+            global._mongoClientPromise = client.connect()
+                .catch(error => {
+                    console.error('MongoDB connection error:', error);
+                    throw error;
+                });
+        }
+        clientPromise = global._mongoClientPromise;
+    } else {
         client = new MongoClient(uri, options);
-        global._mongoClientPromise = client.connect();
+        clientPromise = client.connect()
+            .catch(error => {
+                console.error('MongoDB connection error:', error);
+                throw error;
+            });
     }
-    clientPromise = global._mongoClientPromise;
-} else {
-    // In production, it's fine to use a local variable
-    client = new MongoClient(uri, options);
-    clientPromise = client.connect();
+} catch (error) {
+    console.error('MongoDB initialization error:', error);
+    throw error;
 }
 
 export default clientPromise;

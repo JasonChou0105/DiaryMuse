@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import udioapi from '../../../src/udioapi';
 
 // Define the expected request body structure
 interface SongRequest {
@@ -20,12 +19,27 @@ export async function POST(request: Request) {
             );
         }
 
-        // Call the udioapi with the correct parameters
-        const result = await udioapi(body.description, body.lyrics);
+        // Fetch the response from the long-running ngrok API
+        const response = await fetch(`${process.env.NGROKLINK}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                description: body.description,
+                lyrics: body.lyrics,
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`API responded with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log(data.link);
 
         // Return the successful response
-        return NextResponse.json({ iframeSrc: result });
-
+        return NextResponse.json({ iframeSrc: data.link }) //TODO
     } catch (error) {
         // Log the specific error
         console.error("Error in /api/getsong:", error);
