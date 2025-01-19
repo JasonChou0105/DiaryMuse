@@ -14,11 +14,6 @@ interface APIResponse {
   response: string;
 }
 
-interface TextAreaStyles {
-  height: string;
-  overflowY: "hidden" | "auto";
-}
-
 // Constants
 const MAX_TEXTAREA_HEIGHT = 112; // 4 lines × 28px line height
 const LINE_HEIGHT = "1.75rem";
@@ -31,7 +26,6 @@ const Home: React.FC = () => {
     text: "",
     selectedGenres: [],
   });
-  const [dbEntryId, setDbEntryId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Refs
@@ -70,25 +64,21 @@ const Home: React.FC = () => {
     setError(null);
 
     try {
+      const gptResponse = await fetchGPTResponse(formData.text);
+
+      const { audioFile } = await fetchSongResponse(
+          formData.selectedGenres.join(", "),
+          gptResponse.response
+      );
+
+      console.log("audio", audioFile);
+
       const savedEntry = await saveToDB({
         prompt: formData.text,
         genres: formData.selectedGenres,
         user: "", // Replace with actual user identifier if available
         date: new Date().toISOString(),
-      });
-
-      setDbEntryId(savedEntry._id);
-
-      const gptResponse = await fetchGPTResponse(formData.text);
-
-      const audioFile = await fetchSongResponse(
-          formData.selectedGenres.join(", "),
-          gptResponse.response
-      );
-      console.log("audio", audioFile)
-
-      await updateDBEntry(savedEntry._id, {
-        audioFile,
+        audioFile: audioFile,
         lyrics: gptResponse.response,
       });
 
@@ -141,15 +131,11 @@ const Home: React.FC = () => {
     genres: string[];
     user: string;
     date: string;
+    audioFile: string;
+    lyrics: string;
   }): Promise<{ _id: string }> => {
-    return apiRequest("/api/saveToDB", "POST", data);
-  };
-
-  const updateDBEntry = (
-      id: string,
-      update: { audioFile: string; lyrics: string }
-  ): Promise<void> => {
-    return apiRequest(`/api/saveToDB/${id}`, "PATCH", update);
+    console.log("data", data);
+    return apiRequest("/api/saveDB", "POST", data);
   };
 
   return (
