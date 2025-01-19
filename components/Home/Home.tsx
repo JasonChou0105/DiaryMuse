@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState, useRef, ChangeEvent, FormEvent } from "react";
+import React, {
+  useState,
+  useRef,
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+} from "react";
 import Result from "./Result/Result";
 import GenreList from "./GenreList";
 
@@ -38,14 +44,17 @@ const Home: React.FC = () => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   // Handlers
-  const handleTextAreaInput = (event: ChangeEvent<HTMLTextAreaElement>): void => {
+  const handleTextAreaInput = (
+    event: ChangeEvent<HTMLTextAreaElement>
+  ): void => {
     const textarea = textAreaRef.current;
     if (!textarea) return;
 
     textarea.style.height = "auto";
     const newHeight = textarea.scrollHeight;
     textarea.style.height = `${Math.min(newHeight, MAX_TEXTAREA_HEIGHT)}px`;
-    textarea.style.overflowY = newHeight > MAX_TEXTAREA_HEIGHT ? "auto" : "hidden";
+    textarea.style.overflowY =
+      newHeight > MAX_TEXTAREA_HEIGHT ? "auto" : "hidden";
 
     setFormData((prev) => ({ ...prev, text: event.target.value }));
   };
@@ -82,8 +91,8 @@ const Home: React.FC = () => {
       const gptResponse = await fetchGPTResponse(formData.text);
 
       const audioFile = await fetchSongResponse(
-          formData.selectedGenres.join(", "),
-          gptResponse.response
+        formData.selectedGenres.join(", "),
+        gptResponse.response
       );
 
       await updateDBEntry(savedEntry._id, {
@@ -107,9 +116,9 @@ const Home: React.FC = () => {
 
   // API Utility Functions
   const apiRequest = async (
-      url: string,
-      method: string,
-      body: Record<string, unknown>
+    url: string,
+    method: string,
+    body: Record<string, unknown>
   ): Promise<any> => {
     const response = await fetch(url, {
       method,
@@ -123,14 +132,31 @@ const Home: React.FC = () => {
 
     return response.json();
   };
+  useEffect(() => {
+    const fetchAudioFile = async () => {
+      try {
+        const response = await fetch("/api/getAudioFile");
+        if (!response.ok) {
+          throw new Error("Failed to fetch audio file");
+        }
+        const data = await response.json();
+        setAudioFile(data.url); // Assuming `url` contains the audio file link
+      } catch (error) {
+        console.error("Error fetching audio file:", error);
+        setError("Failed to fetch audio file.");
+      }
+    };
+
+    fetchAudioFile();
+  }, []);
 
   const fetchGPTResponse = (prompt: string): Promise<APIResponse> => {
     return apiRequest("/api/gpt4gen", "POST", { prompt });
   };
 
   const fetchSongResponse = (
-      description: string,
-      lyrics: string
+    description: string,
+    lyrics: string
   ): Promise<{ audioFile: string }> => {
     return apiRequest("/api/getsong", "POST", { description, lyrics });
   };
@@ -145,53 +171,60 @@ const Home: React.FC = () => {
   };
 
   const updateDBEntry = (
-      id: string,
-      update: { audioFile: string; lyrics: string }
+    id: string,
+    update: { audioFile: string; lyrics: string }
   ): Promise<void> => {
     return apiRequest(`/api/saveToDB/${id}`, "PATCH", update);
   };
 
   return (
-      <div className="container">
-        <div className="flex flex-col items-center justify-center min-h-screen">
-          <h1 className="my-4 text-3xl font-bold text-gray-700">How Was Your Day?</h1>
+    <div className="container">
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h1 className="my-4 text-3xl font-bold text-gray-700">
+          How Was Your Day?
+        </h1>
 
-          <div className="bg-beige-200 rounded-3xl shadow-lg w-full flex flex-col items-center justify-center max-w-2xl">
-            <form onSubmit={handleSubmit} className="w-full max-w-2xl flex">
+        <div className="bg-beige-200 rounded-3xl shadow-lg w-full flex flex-col items-center justify-center max-w-2xl">
+          <form onSubmit={handleSubmit} className="w-full max-w-2xl flex">
             <textarea
-                id="textArea"
-                ref={textAreaRef}
-                value={formData.text}
-                onChange={handleTextAreaInput}
-                className="block w-5/6 p-4 text-gray-700 bg-transparent rounded-l-3xl focus:outline-none focus:border-blue-500 resize-none"
-                placeholder="Type something..."
-                rows={1}
-                style={{ lineHeight: LINE_HEIGHT }}
-                disabled={loading}
+              id="textArea"
+              ref={textAreaRef}
+              value={formData.text}
+              onChange={handleTextAreaInput}
+              className="block w-5/6 p-4 text-gray-700 bg-transparent rounded-l-3xl focus:outline-none focus:border-blue-500 resize-none"
+              placeholder="Type something..."
+              rows={1}
+              style={{ lineHeight: LINE_HEIGHT }}
+              disabled={loading}
             />
 
-              <button
-                  type="submit"
-                  className="transition-all ease-in duration-300 w-1/6 m-2 text-black bg-beige-300 rounded-3xl hover:bg-beige-400 focus:outline-none shadow-md"
-                  disabled={loading}
-              >
-                {loading ? "Generating..." : "Generate"}
-              </button>
-            </form>
+            <button
+              type="submit"
+              className="transition-all ease-in duration-300 w-1/6 m-2 text-black bg-beige-300 rounded-3xl hover:bg-beige-400 focus:outline-none shadow-md"
+              disabled={loading}
+            >
+              {loading ? "Generating..." : "Generate"}
+            </button>
+          </form>
 
-            {error && <p className="text-red-500 mt-2">{error}</p>}
+          {error && <p className="text-red-500 mt-2">{error}</p>}
 
-            <div className="w-full px-4 pb-2 flex max-w-2xl">
-              <GenreList
-                  selectedGenres={formData.selectedGenres}
-                  setSelectedGenres={updateSelectedGenres}
-              />
-            </div>
+          <div className="w-full px-4 pb-2 flex max-w-2xl">
+            <GenreList
+              selectedGenres={formData.selectedGenres}
+              setSelectedGenres={updateSelectedGenres}
+            />
           </div>
         </div>
-
-        <Result audioFile={audioFile || 'https://storage.googleapis.com/udio-artifacts-c33fe3ba-3ffe-471f-92c8-5dfef90b3ea3/samples/213e499f134c44a5a40858410a073c6a/1/The%2520Untitled.mp3'} />
       </div>
+
+      <Result
+        audioFile={
+          audioFile ||
+          "https://storage.googleapis.com/udio-artifacts-c33fe3ba-3ffe-471f-92c8-5dfef90b3ea3/samples/213e499f134c44a5a40858410a073c6a/1/The%2520Untitled.mp3"
+        }
+      />
+    </div>
   );
 };
 

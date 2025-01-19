@@ -28,7 +28,7 @@ def perform_actions():
 
         pyautogui.moveTo(677, 882)
         pyautogui.click()
-        time.sleep(60)  # Add a small delay for the action to process
+        time.sleep(65)  # Add a small delay for the action to process
         
         pyautogui.moveTo(1865, 276) #menu
         pyautogui.click()
@@ -55,11 +55,14 @@ def perform_actions():
         time.sleep(0.5)
 
         pyautogui.moveTo(1488, 309) #copy
+        time.sleep(3)
         pyautogui.doubleClick()
-        time.sleep(0.5)
+        time.sleep(1)
         pyautogui.hotkey("ctrl", "c")
+        time.sleep(1)
 
         clipboard_data = pyperclip.paste()
+        print(jsonify({"message": "Actions performed successfully", "file": clipboard_data}))
 
         # Return the clipboard contents as JSON
         return jsonify({"message": "Actions performed successfully", "file": clipboard_data}), 200
