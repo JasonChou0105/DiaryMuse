@@ -1,11 +1,6 @@
 "use client";
 
-import React, {
-  useState,
-  useRef,
-  ChangeEvent,
-  FormEvent,
-} from "react";
+import React, { useState, useRef, ChangeEvent, FormEvent } from "react";
 import Result from "./Result/Result";
 import GenreList from "./GenreList";
 
@@ -26,6 +21,7 @@ const LINE_HEIGHT = "1.75rem";
 const Home: React.FC = () => {
   // State
   const [loading, setLoading] = useState(false);
+  const [dataRetrived, setDataRetrived] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     text: "",
     selectedGenres: [],
@@ -95,6 +91,7 @@ const Home: React.FC = () => {
       setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
+      setDataRetrived(true);
     }
   };
 
@@ -134,6 +131,9 @@ const Home: React.FC = () => {
 
   const saveToDB = (data: {
     prompt: string;
+    caption: string;
+    title: string;
+    likes: number;
     genres: string[];
     user: string;
     date: string;
@@ -184,8 +184,7 @@ const Home: React.FC = () => {
           </div>
         </div>
       </div>
-
-      <Result/>
+      <Result />
     </div>
   );
 };

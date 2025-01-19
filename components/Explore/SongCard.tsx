@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { FaHeart } from "react-icons/fa";
+import AudioPlayer from "../AudioPlayer";
 
 function SongCard({ song }) {
   const [likes, setLikes] = useState(song.likes);
@@ -19,12 +20,8 @@ function SongCard({ song }) {
   return (
     <div className="w-[530px] border border-gray-300 rounded-lg shadow-lg bg-beige-200">
       {/* Embed Section */}
-      <div className="w-[530px] h-[228px] rounded-lg overflow-hidden bg-white">
-        <iframe
-          src={song.embed}
-          className="w-full h-full border-none"
-          allowFullScreen
-        ></iframe>
+      <div className="w-[530px] rounded-lg overflow-hidden bg-white">
+        <AudioPlayer audioUrl={song.audioFile} />
       </div>
 
       {/* Content Section */}

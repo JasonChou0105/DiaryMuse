@@ -37,7 +37,7 @@ const AudioPlayer = ({ audioUrl }) => {
       <div className="flex items-center">
         <button
           onClick={handlePlayPause}
-          className="mx-8 flex aspect-square items-center justify-center text-center w-12 h-12 bg-beige-300 text-white rounded-full shadow-md hover:bg-beige-400 transition duration-200"
+          className="mx-8 flex aspect-square items-center justify-center text-center w-12 h-full bg-beige-300 text-white rounded-full shadow-md hover:bg-beige-400 transition duration-200"
         >
           {isPlaying ? <FaPause size={24} /> : <FaPlay size={24} />}
         </button>

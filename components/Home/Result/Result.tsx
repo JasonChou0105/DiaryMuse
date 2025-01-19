@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Lyrics from "./Lyrics";
-import AudioPlayer from "./AudioPlayer";
+import AudioPlayer from "../../AudioPlayer";
+import fetchAudioFiles from "@/src/getmongo";
 
 const Result = () => {
   const [formData, setFormData] = useState({
@@ -25,6 +26,17 @@ const Result = () => {
   const handlePostPublic = () => {
     console.log("Posted publicly:", formData);
   };
+  useEffect(() => {
+    fetch("/api/getAudioFile")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok " + response.statusText);
+        }
+        return response.json();
+      })
+      .then((data) => console.log(data))
+      .catch((error) => console.error("There was an error:", error));
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center p-24 mt-24">
