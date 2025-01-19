@@ -85,6 +85,7 @@ const Home: React.FC = () => {
           formData.selectedGenres.join(", "),
           gptResponse.response
       );
+      console.log("audio", audioFile)
 
       await updateDBEntry(savedEntry._id, {
         audioFile,

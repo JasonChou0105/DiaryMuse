@@ -13,23 +13,27 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
         const formData = await req.formData();
         const file = formData.get("file") as File;
+        const lyrics = formData.get("lyrics") as string;
 
-        if (!file) {
-            return NextResponse.json({ error: "File not provided" }, { status: 400 });
+        if (!file || !(file instanceof File)) {
+            return NextResponse.json({ error: "Invalid or missing file" }, { status: 400 });
+        }
+        if (!lyrics) {
+            return NextResponse.json({ error: "Missing lyrics" }, { status: 400 });
         }
 
-        // Upload file to Google Cloud Storage
+        // Convert file to Buffer
         const fileBuffer = Buffer.from(await file.arrayBuffer());
         const fileUrl = await uploadFile(fileBuffer, file.name);
 
-        // Update MongoDB document with the file URL
+        // Update MongoDB
         const client = await clientPromise;
         const db = client.db("uottahack7");
         const collection = db.collection("posts");
 
         const result = await collection.updateOne(
             { _id: new ObjectId(id) },
-            { $set: { fileUrl } }
+            { $set: { fileUrl, lyrics } }
         );
 
         if (result.modifiedCount === 0) {
