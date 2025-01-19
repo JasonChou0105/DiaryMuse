@@ -16,6 +16,7 @@ function Explore() {
       audioFile:
         "https://storage.googleapis.com/udio-artifacts-c33fe3ba-3ffe-471f-92c8-5dfef90b3ea3/samples/5f32c095998d4bbd84f481cd3587a4c3/1/The%2520Untitled.mp3",
       lyrics: "Dreaming high, chasing skies, never let go of the fire inside.",
+      visibility: "Public",
     },
     {
       prompt:
@@ -30,6 +31,7 @@ function Explore() {
         "https://storage.googleapis.com/udio-artifacts-c33fe3ba-3ffe-471f-92c8-5dfef90b3ea3/samples/5f32c095998d4bbd84f481cd3587a4c3/1/The%2520Untitled.mp3",
       lyrics:
         "Memories fade, but the feelings stay, lost in time, we drift away.",
+      visibility: "Public",
     },
     {
       prompt:
@@ -44,6 +46,7 @@ function Explore() {
         "https://storage.googleapis.com/udio-artifacts-c33fe3ba-3ffe-471f-92c8-5dfef90b3ea3/samples/5f32c095998d4bbd84f481cd3587a4c3/1/The%2520Untitled.mp3",
       lyrics:
         "Through the dark, you shine the brightest, an eternal glow inside us.",
+      visibility: "Public",
     },
     {
       prompt:
@@ -58,6 +61,7 @@ function Explore() {
         "https://storage.googleapis.com/udio-artifacts-c33fe3ba-3ffe-471f-92c8-5dfef90b3ea3/samples/5f32c095998d4bbd84f481cd3587a4c3/1/The%2520Untitled.mp3",
       lyrics:
         "Fall to the ground, rise like the sun, a new day has just begun.",
+      visibility: "Public",
     },
     {
       prompt:
@@ -72,6 +76,7 @@ function Explore() {
         "https://storage.googleapis.com/udio-artifacts-c33fe3ba-3ffe-471f-92c8-5dfef90b3ea3/samples/5f32c095998d4bbd84f481cd3587a4c3/1/The%2520Untitled.mp3",
       lyrics:
         "The wind carries secrets, soft and kind, whispers of love left behind.",
+      visibility: "Public",
     },
     {
       prompt:
@@ -86,6 +91,7 @@ function Explore() {
         "https://storage.googleapis.com/udio-artifacts-c33fe3ba-3ffe-471f-92c8-5dfef90b3ea3/samples/5f32c095998d4bbd84f481cd3587a4c3/1/The%2520Untitled.mp3",
       lyrics:
         "Your voice remains, through every wall, echoes of you, forever call.",
+      visibility: "Public",
     },
     {
       prompt:
@@ -100,6 +106,7 @@ function Explore() {
         "https://storage.googleapis.com/udio-artifacts-c33fe3ba-3ffe-471f-92c8-5dfef90b3ea3/samples/5f32c095998d4bbd84f481cd3587a4c3/1/The%2520Untitled.mp3",
       lyrics:
         "Under the city lights, we find our way, hearts ablaze, night turns to day.",
+      visibility: "Public",
     },
     {
       prompt:
@@ -114,8 +121,10 @@ function Explore() {
         "https://storage.googleapis.com/udio-artifacts-c33fe3ba-3ffe-471f-92c8-5dfef90b3ea3/samples/5f32c095998d4bbd84f481cd3587a4c3/1/The%2520Untitled.mp3",
       lyrics:
         "Through the storm, I find my calm, an unbroken spirit, keeping me strong.",
+      visibility: "Public",
     },
   ];
+
   return (
     <div className="w-3/4 flex flex-col justify-items-center mx-auto p-6 mt-24">
       <h1 className="text-3xl pb-1 font-bold mb-6 border-b-2 border-beige-300">
