@@ -41,7 +41,9 @@ const Home: React.FC = () => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   // Handlers
-  const handleTextAreaInput = (event: ChangeEvent<HTMLTextAreaElement>): void => {
+  const handleTextAreaInput = (
+    event: ChangeEvent<HTMLTextAreaElement>
+  ): void => {
     const textarea = textAreaRef.current;
     if (!textarea) return;
 
@@ -100,8 +102,8 @@ const Home: React.FC = () => {
 
       // Generate song using lyrics and genres
       const songResponse = await fetchSongResponse(
-          formData.selectedGenres.join(", "),
-          gptResponse.response
+        formData.selectedGenres.join(", "),
+        gptResponse.response
       );
 
       // Update MongoDB entry with song embed and lyrics
@@ -142,8 +144,8 @@ const Home: React.FC = () => {
   };
 
   const fetchSongResponse = async (
-      description: string,
-      lyrics: string
+    description: string,
+    lyrics: string
   ): Promise<SongResponse> => {
     const response = await fetch("/api/getsong", {
       method: "POST",
@@ -178,8 +180,8 @@ const Home: React.FC = () => {
   };
 
   const updateDBEntry = async (
-      id: string,
-      update: { songEmbed: string; lyrics: string }
+    id: string,
+    update: { songEmbed: string; lyrics: string }
   ): Promise<void> => {
     const response = await fetch(`/api/saveToDB/${id}`, {
       method: "PATCH",
@@ -193,52 +195,46 @@ const Home: React.FC = () => {
   };
 
   return (
-      <div className="container">
-        <div className="flex flex-col items-center justify-center min-h-screen">
-          <h1 className="block my-4 text-3xl font-bold text-gray-700">
-            How Was Your Day?
-          </h1>
+    <div className="container">
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h1 className="block my-4 text-3xl font-bold text-gray-700">
+          How Was Your Day?
+        </h1>
 
-          <div
-              className="bg-beige-200 rounded-3xl shadow-lg w-full flex flex-col items-center justify-center max-w-2xl">
-            <form onSubmit={handleSubmit} className="w-full flex max-w-2xl">
-              <textarea
-                  id="textArea"
-                  ref={textAreaRef}
-                  value={formData.text}
-                  onChange={handleTextAreaInput}
-                  className="block w-5/6 p-4 text-gray-700 bg-transparent rounded-l-3xl focus:outline-none focus:border-blue-500 resize-none"
-                  placeholder="Type something..."
-                  rows={1}
-                  style={{lineHeight: LINE_HEIGHT}}
-                  disabled={loading} // Prevent text input while loading
-              />
+        <div className="bg-beige-200 rounded-3xl shadow-lg w-full flex flex-col items-center justify-center max-w-2xl">
+          <form onSubmit={handleSubmit} className="w-full flex max-w-2xl">
+            <textarea
+              id="textArea"
+              ref={textAreaRef}
+              value={formData.text}
+              onChange={handleTextAreaInput}
+              className="block w-5/6 p-4 text-gray-700 bg-transparent rounded-l-3xl focus:outline-none focus:border-blue-500 resize-none"
+              placeholder="Type something..."
+              rows={1}
+              style={{ lineHeight: LINE_HEIGHT }}
+              disabled={loading}
+            />
 
-              <button
-                  type="submit"
-                  className={`transition-all ease-in duration-300 w-1/6 m-2 rounded-3xl ${
-                      loading
-                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                          : "bg-beige-300 hover:bg-beige-400 text-black shadow-md"
-                  }`}
-                  disabled={loading} // Disable button while loading
-              >
-                {loading ? "Generating..." : "Generate"}
-              </button>
-            </form>
+            <button
+              type="submit"
+              className="transition-all ease-in duration-300 w-1/6 m-2 text-black bg-beige-300 rounded-3xl hover:bg-beige-400 focus:outline-none shadow-md"
+              disabled={loading}
+            >
+              {loading ? "Generating..." : "Generate"}
+            </button>
+          </form>
 
-
-            <div className="w-full px-4 pb-2 flex max-w-2xl">
-              <GenreList
-                  selectedGenres={formData.selectedGenres}
-                  setSelectedGenres={updateSelectedGenres}
-              />
-            </div>
+          <div className="w-full px-4 pb-2 flex max-w-2xl">
+            <GenreList
+              selectedGenres={formData.selectedGenres}
+              setSelectedGenres={updateSelectedGenres}
+            />
           </div>
         </div>
-
-        <Result iframeSrc={iframeSrc}/>
       </div>
+
+      <Result iframeSrc={iframeSrc} />
+    </div>
   );
 };
 
