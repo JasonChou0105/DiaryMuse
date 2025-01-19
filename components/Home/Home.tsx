@@ -185,7 +185,7 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      <Result />
+      <Result/>
     </div>
   );
 };
