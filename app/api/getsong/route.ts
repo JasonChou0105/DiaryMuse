@@ -36,10 +36,10 @@ export async function POST(request: Request) {
         }
 
         const data = await response.json();
-        console.log(data.link);
+        console.log("AUDIO FILE DATA JASON CHOU", data.file);
 
         // Return the successful response
-        return NextResponse.json({ audioFile: data.link }) //TODO
+        return NextResponse.json({ audioFile: data.file }) //TODO
     } catch (error) {
         // Log the specific error
         console.error("Error in /api/getsong:", error);
