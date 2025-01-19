@@ -1,20 +1,36 @@
 import { MongoClient } from "mongodb";
+import { NextResponse } from "next/server";
 
-const uri = "your_mongodb_connection_string";
-const client = new MongoClient(uri);
+// MongoDB connection
+const uri = process.env.MONGODB_URI;
+let cachedClient = null;
 
-export default async function route(req, res) {
+async function getMongoClient() {
+  if (!cachedClient) {
+    cachedClient = new MongoClient(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    await cachedClient.connect();
+  }
+  return cachedClient;
+}
+
+// Handler function for the API route
+export async function GET() {
   try {
-    await client.connect();
-    const database = client.db("yourDatabaseName");
-    const collection = database.collection("yourCollectionName");
+    const client = await getMongoClient();
+    const database = client.db("uottahack7");
+    const collection = database.collection("test");
 
     const data = await collection.find({}).toArray();
-    res.status(200).json(data);
+
+    return NextResponse.json(data, { status: 200 });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Unable to fetch data" });
-  } finally {
-    await client.close();
+    console.error("Error fetching data:", error);
+    return NextResponse.json(
+      { error: "Unable to fetch data" },
+      { status: 500 }
+    );
   }
 }
