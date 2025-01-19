@@ -3,7 +3,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Lyrics from "./Lyrics";
 import AudioPlayer from "../../AudioPlayer";
-import fetchAudioFiles from "@/src/getmongo";
 
 const Result = () => {
   const [formData, setFormData] = useState({
@@ -35,7 +34,10 @@ const Result = () => {
         }
         return response.json();
       })
-      .then((data) => setSongData(data))
+      .then((data) => {
+        setSongData(data);
+        console.log("AHSUHAU", data);
+      })
       .catch((error) => console.error("There was an error:", error));
   }, []);
 
@@ -46,7 +48,7 @@ const Result = () => {
       </div>
       <div className="w-full flex flex-row justify-center items-center">
         <div className="flex flex-col w-1/2 h-80">
-          <AudioPlayer audioUrl={songData.audioFile} />
+          <AudioPlayer audioUrl={songData} />
           <Lyrics />
         </div>
 
