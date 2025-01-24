@@ -1,3 +1,9 @@
+# DiaryMuse
+
+This was our (Darsh Gupta and Jason Chou)'s submission to uOttaHack 7.
+
+DiaryMuse: Transform diaries by turning everyday emotions and experiences into music. By allowing users to make personal songs from diary entries and share them to friends and family through a social platform, we foster self-expression and creativity.
+
 Users write diary entries reflecting on their day, emotions, or experiences. These entries act as raw material for creating personalized content.
 Journaling becomes more engaging, encouraging mindfulness and emotional expression while offering a therapeutic outlet.
 
